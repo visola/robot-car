@@ -16,7 +16,6 @@ SENSORS = [NORTH]
 
 def initialize():
     print("Initializing sensors...")
-    GPIO.setmode(GPIO.BCM)
     for sensor in SENSORS:
         print(f"Initializing sensor: {sensor.name}")
         GPIO.setup(sensor.trigger, GPIO.OUT)
@@ -43,8 +42,3 @@ def distance(sensor):
 
 def distance_north():
     return distance(NORTH)
-
-def cleanup():
-    print("Cleaning up GPIO...")
-    GPIO.cleanup()
-    print("Sensors done.")

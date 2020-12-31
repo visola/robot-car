@@ -21,6 +21,12 @@ BACK_LEFT = Wheel("Back Left", 3, BACKWARD, FORWARD)
 
 WHEELS = [FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT]
 
+STATE_FORWARD = 0
+STATE_ROTATING_RIGHT = 1
+STATE_STOPPED = 2
+
+current_state = STATE_STOPPED
+
 def initialize():
     print("Initializing wheels...")
     global i2c
@@ -54,8 +60,28 @@ def calibration_mode():
         hat.channels[wheel.index].duty_cycle = STOPPED
         time.sleep(2)
 
+def move_forward():
+    global current_state
+    hat.channels[FRONT_LEFT.index].duty_cycle = FRONT_LEFT.forward
+    hat.channels[FRONT_RIGHT.index].duty_cycle = FRONT_RIGHT.forward
+    hat.channels[BACK_LEFT.index].duty_cycle = BACK_LEFT.forward
+    hat.channels[BACK_RIGHT.index].duty_cycle = BACK_RIGHT.forward
+    current_state = STATE_FORWARD
+
 def rotate_right():
-    hat.channels[FRONT_RIGHT.index].duty_cycle = 15000
-    hat.channels[FRONT_LEFT.index].duty_cycle = 15000
-    hat.channels[BACK_RIGHT.index].duty_cycle = 15000
-    hat.channels[BACK_LEFT.index].duty_cycle = 15000
+    global current_state
+    hat.channels[FRONT_LEFT.index].duty_cycle = FRONT_LEFT.forward
+    hat.channels[BACK_LEFT.index].duty_cycle = BACK_LEFT.forward
+    
+    hat.channels[FRONT_RIGHT.index].duty_cycle = FRONT_RIGHT.backward
+    hat.channels[BACK_RIGHT.index].duty_cycle = BACK_RIGHT.backward
+
+    current_state = STATE_ROTATING_RIGHT
+
+def stop():
+    global current_state
+    hat.channels[FRONT_LEFT.index].duty_cycle = STOPPED
+    hat.channels[BACK_LEFT.index].duty_cycle = STOPPED
+    hat.channels[FRONT_RIGHT.index].duty_cycle = STOPPED
+    hat.channels[BACK_RIGHT.index].duty_cycle = STOPPED
+    current_state = STATE_STOPPED
