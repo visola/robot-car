@@ -3,6 +3,8 @@ import RPi.GPIO as GPIO
 import subprocess
 import time
 
+from pydispatch import dispatcher
+
 from robot import buttons
 from robot import leds
 from robot import sensors
@@ -20,10 +22,10 @@ def green_button_pressed(pressed):
     global green_button_pressed_count
     if pressed:
         green_button_pressed_count += 1
-        leds.white_off()
+        dispatcher.send(signal="/led/white", on=False)
         green_button_pressed_at = time.time()
     else:
-        leds.white_on()
+        dispatcher.send(signal="/led/white", on=True)
         green_button_pressed_at = 0
 
 if __name__ == '__main__':
@@ -35,7 +37,7 @@ if __name__ == '__main__':
     wheels.initialize()
 
     buttons.add_green_button_handler(green_button_pressed)
-    leds.white_on()
+    dispatcher.send(signal="/led/white", on=True)
 
     started_robot_count = 0
 
@@ -44,7 +46,7 @@ if __name__ == '__main__':
             if green_button_pressed_at != 0 and time.time() - green_button_pressed_at > 5:
                 LOGGER.info("5s passed... shutting down...")
                 wheels.stop()
-                leds.white_off()
+                dispatcher.send(signal="/led/white", on=False)
                 subprocess.run(["sudo", "shutdown", "-h", "now"], capture_output=True)
                 break
 
