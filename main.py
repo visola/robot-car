@@ -44,6 +44,7 @@ if __name__ == '__main__':
             if green_button_pressed_at != 0 and time.time() - green_button_pressed_at > 5:
                 LOGGER.info("5s passed... shutting down...")
                 wheels.stop()
+                leds.white_off()
                 subprocess.run(["sudo", "shutdown", "-h", "now"], capture_output=True)
                 break
 
