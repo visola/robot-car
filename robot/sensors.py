@@ -1,5 +1,8 @@
+import logging
 import RPi.GPIO as GPIO
 import time
+
+LOGGER = logging.getLogger("robot-car-sensors")
 
 class Sensor(object):
     def __init__(self, name, trigger, echo):
@@ -15,12 +18,12 @@ NORTH = Sensor("N", 23, 24)
 SENSORS = [NORTH]
 
 def initialize():
-    print("Initializing sensors...")
+    LOGGER.info("Initializing sensors...")
     for sensor in SENSORS:
-        print(f"Initializing sensor: {sensor.name}")
+        LOGGER.info(f"Initializing sensor: {sensor.name}")
         GPIO.setup(sensor.trigger, GPIO.OUT)
         GPIO.setup(sensor.echo, GPIO.IN)
-    print("Sensors initialized.")
+    LOGGER.info("Sensors initialized.")
 
 def distance(sensor):
 	GPIO.output(sensor.trigger, True)

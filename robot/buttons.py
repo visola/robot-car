@@ -1,4 +1,7 @@
+import logging
 import RPi.GPIO as GPIO
+
+LOGGER = logging.getLogger("robot-car-buttons")
 
 GREEN_BUTTON = 22
 
@@ -6,10 +9,10 @@ green_button_handlers = []
 green_button_value = False
 
 def initialize():
-    print("Initializing buttons...")
+    LOGGER.info("Initializing buttons...")
     GPIO.setup(GREEN_BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.add_event_detect(GREEN_BUTTON,GPIO.BOTH,callback=handle_green_button_press)
-    print("Buttons ready.")
+    LOGGER.info("Buttons ready.")
 
 
 def add_green_button_handler(handler):

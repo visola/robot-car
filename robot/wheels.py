@@ -1,7 +1,10 @@
 import adafruit_pca9685
 import board
 import busio
+import logging
 import time
+
+LOGGER = logging.getLogger("robot-car-wheels")
 
 class Wheel(object):
     def __init__(self, name, index, forward, backward):
@@ -28,35 +31,35 @@ STATE_STOPPED = 2
 current_state = STATE_STOPPED
 
 def initialize():
-    print("Initializing wheels...")
+    LOGGER.info("Initializing wheels...")
     global i2c
     global hat
     
     i2c = busio.I2C(board.SCL, board.SDA)
     hat = adafruit_pca9685.PCA9685(i2c)
     hat.frequency = 50
-    print("Wheels ready.")
+    LOGGER.info("Wheels ready.")
 
 def cleanup():
-    print("Stopping wheels...")
+    LOGGER.info("Stopping wheels...")
     for wheel in WHEELS:
         hat.channels[wheel.index].duty_cycle = 0
 
-    print("Wheels done.")
+    LOGGER.info("Wheels done.")
 
 def calibration_mode():
     for wheel in WHEELS:
-        print(f"Calibraring wheel {wheel.name}")
-        print("Moving forward...")
+        LOGGER.info(f"Calibraring wheel {wheel.name}")
+        LOGGER.info("Moving forward...")
         hat.channels[wheel.index].duty_cycle = wheel.forward
         time.sleep(2)
-        print("Stopped...")
+        LOGGER.info("Stopped...")
         hat.channels[wheel.index].duty_cycle = STOPPED
         time.sleep(2)
-        print("Moving backward...")
+        LOGGER.info("Moving backward...")
         hat.channels[wheel.index].duty_cycle = wheel.backward
         time.sleep(2)
-        print("Stopped...")
+        LOGGER.info("Stopped...")
         hat.channels[wheel.index].duty_cycle = STOPPED
         time.sleep(2)
 
