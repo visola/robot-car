@@ -4,9 +4,8 @@ import signal
 import sys
 import time
 
-from pydispatch import dispatcher
-
 import controllers
+import dispatcher
 import drivers
 import logger
 
@@ -36,23 +35,17 @@ if __name__ == '__main__':
     controllers.initialize()
 
     dispatcher.send(signal="/led/white", on=True)
+    dispatcher.connect(terminate, signal="/system/shutdown")
 
-    # started_robot_count = 0
+    dispatcher.send("/wheels/forward")
+    time.sleep(5)
+    dispatcher.send("/wheels/stop")
+
     try:
-        x = 0
         while True:
-            x += 1
-            time.sleep(1)
-            # if started_robot_count != green_button_pressed_count:
-            #     started_robot_count = green_button_pressed_count
-            #     if wheels.current_state == wheels.STATE_STOPPED:
-            #         LOGGER.info("Moving forward...")
-            #         wheels.move_forward()
-            #     else:
-            #         LOGGER.info("Stopping...")
-            #         wheels.stop()
-
-            # time.sleep(0.1)
+            if terminating:
+                break
+            time.sleep(0.1)
 
     except KeyboardInterrupt:
         LOGGER.info("Interrupted...")
